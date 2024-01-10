@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rando", "Rando\Rando.csproj", "{2A32CA88-06CE-454E-ABAC-F8561CB5DBA2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rando.Tests", "Rando.Tests\Rando.Tests.csproj", "{8BFE0398-521E-4C9D-AACD-F3F2B5A592FB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2A32CA88-06CE-454E-ABAC-F8561CB5DBA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A32CA88-06CE-454E-ABAC-F8561CB5DBA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A32CA88-06CE-454E-ABAC-F8561CB5DBA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A32CA88-06CE-454E-ABAC-F8561CB5DBA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BFE0398-521E-4C9D-AACD-F3F2B5A592FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BFE0398-521E-4C9D-AACD-F3F2B5A592FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BFE0398-521E-4C9D-AACD-F3F2B5A592FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BFE0398-521E-4C9D-AACD-F3F2B5A592FB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
