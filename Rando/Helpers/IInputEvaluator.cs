@@ -4,6 +4,6 @@ using Rando.Helpers;
 public interface IInputEvaluator
 {
 
-    UserInput GetFormattedUserInput(ref string[]? args);
+    UserInput GetFormattedUserInput(string[]? args);
 
 }

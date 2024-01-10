@@ -17,7 +17,7 @@ public class InputEvaluator : IInputEvaluator {
     /// </summary>
     /// <param name="args"></param>
     /// <returns></returns>
-    public UserInput GetFormattedUserInput(ref string[]? args)
+    public UserInput GetFormattedUserInput(string[]? args)
     {
         if (args == null || args?.Length == 0)
         {
@@ -31,11 +31,11 @@ public class InputEvaluator : IInputEvaluator {
             userInput.Quantity = Convert.ToInt32(IsArgPresent(args, 1));
             userInput.FlagType = IsArgPresent(args, 2);
 
-            EvaluateRequiredProperties(ref userInput);
+            EvaluateRequiredProperties(userInput);
 
             if (!string.IsNullOrEmpty(userInput.FlagType)) {
-                SetFlagProperties(args, ref userInput);
-                EvaluateFlagProperties(ref userInput);
+                SetFlagProperties(args, userInput);
+                EvaluateFlagProperties(userInput);
             }
 
             //var validationResults = IsUserInputValid(userInput);
@@ -69,7 +69,7 @@ public class InputEvaluator : IInputEvaluator {
         return args[index];
     }
 
-    private void SetFlagProperties(string[]? args, ref UserInput userInput) {
+    private void SetFlagProperties(string[]? args, UserInput userInput) {
         switch(args[2]) {
             case FlagType.FileFlag:
                 userInput.FilePath = IsArgPresent(args, 3);
@@ -86,7 +86,7 @@ public class InputEvaluator : IInputEvaluator {
         }
     }
 
-    private void EvaluateRequiredProperties(ref UserInput userInput) 
+    private void EvaluateRequiredProperties(UserInput userInput) 
     {
         List<ValidationResult> QuantityValidationResults = new();
         List<ValidationResult> dataTypeValidationResults = new();
@@ -104,7 +104,7 @@ public class InputEvaluator : IInputEvaluator {
         }
     }
 
-    private void EvaluateFlagProperties(ref UserInput userInput) 
+    private void EvaluateFlagProperties(UserInput userInput) 
     {
         if (userInput.FlagType.Equals(FlagType.FileFlag)) {
             List<ValidationResult> filePathValidationResults = new();
