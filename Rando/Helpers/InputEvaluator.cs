@@ -7,7 +7,6 @@ using Rando.Helpers;
 
 public class InputEvaluator : IInputEvaluator {
     private readonly ILogger<InputEvaluator> logger;
-    // private Dictionary<string, string> UserInputDictionary = new Dictionary<string, string>();
 
     public InputEvaluator(ILogger<InputEvaluator> logger) {
         this.logger = logger;
@@ -28,19 +27,18 @@ public class InputEvaluator : IInputEvaluator {
         UserInput userInput = new();
 
         try {
+            userInput.DataType = IsArgPresent(args, 0);
+            userInput.Quantity = Convert.ToInt32(IsArgPresent(args, 1));
+            userInput.FlagType = IsArgPresent(args, 2);
 
-        userInput.DataType = IsArgPresent(args, 0);
-        userInput.Quantity = Convert.ToInt32(IsArgPresent(args, 1));
-        userInput.FlagType = IsArgPresent(args, 2);
+            EvaluateRequiredProperties(ref userInput);
 
-        EvaluateRequiredProperties(ref userInput);
+            if (!string.IsNullOrEmpty(userInput.FlagType)) {
+                SetFlagProperties(args, ref userInput);
+                EvaluateFlagProperties(ref userInput);
+            }
 
-        if (!string.IsNullOrEmpty(userInput.FlagType)) {
-            SetFlagProperties(args, ref userInput);
-            EvaluateFlagProperties(ref userInput);
-        }
-
-        //var validationResults = IsUserInputValid(userInput);
+            //var validationResults = IsUserInputValid(userInput);
         } 
         catch (Exception) {
             throw;    
@@ -71,33 +69,27 @@ public class InputEvaluator : IInputEvaluator {
         return args[index];
     }
 
-    private bool IsIndexMoreThanLength(string[]? args, int index)
-    {
-        return ((args?.Length - 1) < index);
-    }
-
     private void SetFlagProperties(string[]? args, ref UserInput userInput) {
         switch(args[2]) {
             case FlagType.FileFlag:
-                userInput.FilePath = args[3];
-                userInput.FileName = args[4];
+                userInput.FilePath = IsArgPresent(args, 3);
+                userInput.FileName = IsArgPresent(args, 4);
                 break;
             case FlagType.DatabaseFlag:
-                userInput.DatabaseName = args[3];            
+                userInput.DatabaseName = IsArgPresent(args, 3);            
                 break;
             case FlagType.ApiFlag:
-                userInput.ApiUrl = args[3];            
+                userInput.ApiUrl = IsArgPresent(args, 3);     
                 break;
             default:
                 break;
         }
     }
 
-    private bool EvaluateRequiredProperties(ref UserInput userInput) 
+    private void EvaluateRequiredProperties(ref UserInput userInput) 
     {
         List<ValidationResult> QuantityValidationResults = new();
         List<ValidationResult> dataTypeValidationResults = new();
-        bool isValid = false;
         try {
 
             bool isDataTypeValid = Validator.TryValidateProperty(userInput.DataType, new ValidationContext(userInput, null, null) { MemberName = "DataType"}, dataTypeValidationResults);
@@ -107,11 +99,9 @@ public class InputEvaluator : IInputEvaluator {
                 QuantityValidationResults.AddRange(dataTypeValidationResults);
                 PrintArgViolations(QuantityValidationResults);
             }
-        } catch(Exception ex) {
-            Console.WriteLine(ex.Message);
+        } catch(Exception) {
             throw;
         }
-        return !isValid;
     }
 
     private void EvaluateFlagProperties(ref UserInput userInput) 
@@ -140,8 +130,8 @@ public class InputEvaluator : IInputEvaluator {
         }
     }
 
-    private void PrintArgViolations(List<ValidationResult> validationResults) {
-
+    private void PrintArgViolations(List<ValidationResult> validationResults) 
+    {
         if (validationResults.Count > 0) {
             Console.WriteLine(AppConstants.USER_DIRECTIONS + "\n");
             Console.ForegroundColor = ConsoleColor.Red;

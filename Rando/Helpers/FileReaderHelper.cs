@@ -37,19 +37,7 @@ public class FileReaderHelper: IFileReaderHelper {
 
     public void ReadInput(UserInput userInput)
     {
-        // TODO: Try this approach to logging?
-        // https://www.youtube.com/shorts/PvQGVmozCdU
-        // In addition... need to rely on LoggerMessage
-        // method/library?
-        // https://learn.microsoft.com/en-us/dotnet/core/extensions/high-performance-logging
-        // https://www.youtube.com/watch?v=bnVfrd3lRv8
         _logger.LogInformation("Entered {Namespace}.{MethodName}", base.ToString(), nameof(ReadInput));
-
-        // if (!IsUserInputValid(ref userInput))
-        // {
-        //     RetryInput();
-        //     return;
-        // }
 
         Console.WriteLine("Prompted.\n");
         FilterInput(userInput);
@@ -106,7 +94,6 @@ public class FileReaderHelper: IFileReaderHelper {
         try {
             var response = await httpClient.GetAsync(requestUri: $"{userInput.DataType.ToLowerInvariant()}?size={userInput.Quantity}&is_xml=true");
             var data = await response.Content.ReadAsStringAsync();
-            // await Task.Delay(10000);
             return data;
         }
         catch (Exception ex) {
@@ -121,53 +108,50 @@ public class FileReaderHelper: IFileReaderHelper {
     /// </summary>
     /// <param name="args"></param>
     /// <returns></returns>
-    private bool IsUserInputValid(ref string[]? args) {
+    // private bool IsUserInputValid(ref string[]? args) {
 
-        bool isValid = true;
+    //     bool isValid = true;
 
-        if (args == null || args?.Length == 0)
-        {
-            return !isValid;
-        }
-        if ((args?.Length) <= 1) {
-            Array.Resize(ref args, args.Length+1);
-            args[1] = "1";
-        }
-        if (string.IsNullOrWhiteSpace(args?[0]))
-        {
-            Console.WriteLine($"{AppConstants.USER_DIRECTIONS}");
-            return !isValid;
-        }
-        if (args[1].Any(x => !char.IsDigit(x))) {
-            Console.WriteLine($"{AppConstants.USER_DIRECTIONS}");
-            return !isValid;
-        }
-        // begin evaluating flags and their accompanied args
-        if (args.Length > 2) {
-            // TODO: create new method to explicitly verify flags and options
-            return IsFlagValid(args) ? !isValid : isValid; 
-        }
+    //     if (args == null || args?.Length == 0)
+    //     {
+    //         return !isValid;
+    //     }
+    //     if ((args?.Length) <= 1) {
+    //         Array.Resize(ref args, args.Length+1);
+    //         args[1] = "1";
+    //     }
+    //     if (string.IsNullOrWhiteSpace(args?[0]))
+    //     {
+    //         Console.WriteLine($"{AppConstants.USER_DIRECTIONS}");
+    //         return !isValid;
+    //     }
+    //     if (args[1].Any(x => !char.IsDigit(x))) {
+    //         Console.WriteLine($"{AppConstants.USER_DIRECTIONS}");
+    //         return !isValid;
+    //     }
+    //     // begin evaluating flags and their accompanied args
+    //     if (args.Length > 2) {
+    //         return IsFlagValid(args) ? !isValid : isValid; 
+    //     }
 
-        return isValid;
-    }
+    //     return isValid;
+    // }
 
     /// <summary>
     /// Evaluates flags in argument to determine if they are valid
     /// </summary>
     /// <param name="args"></param>
     /// <returns></returns>
-    private bool IsFlagValid(string [] args) {
-        return (!args[2].Equals("--file-output") && !args[2].Equals("--db-output"));
-    }
+    // private bool IsFlagValid(string [] args) {
+    //     return (!args[2].Equals("--file-output") && !args[2].Equals("--db-output"));
+    // }
 
     /// <summary>
     /// Filters user input by first argument
     /// </summary>
     /// <param name="args"></param>
-    public void FilterInput(UserInput userInput) {
-
-        // int quantity = Convert.ToInt32(args[1]);
-
+    public void FilterInput(UserInput userInput) 
+    {
         // TODO: strongly consider splitting out remaining args into a new str []
         // pass remaining args into the handle method, so you can reduce total number of args in method def
 
