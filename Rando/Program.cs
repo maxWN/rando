@@ -8,23 +8,18 @@ using Rando.Helpers;
 
 public class Program
 {
-    // need to setup program.cs like this, so httpclient factory can be used
-    // https://www.zoneofdevelopment.com/2021/08/25/c-use-ihttpclientfactory-in-a-console-app/
     public static int Main(string[] args)
     {
         try {
-            //setup our DI and configure console logging
             var serviceProvider = new HostBuilder()
             .ConfigureServices((hostContext, services) =>
                 {
-                    // with AddHttpClient we register the IHttpClientFactory
                     services.AddHttpClient("randomDataApi", httpClient => {
                         httpClient.BaseAddress = new Uri($"{AppConstants.RANDOM_DATA_API_BASE_URL}");
                     });
-                    // here, we register the dependency injection  
                     services.AddTransient<IFileReaderHelper, FileReaderHelper>();
                     services.AddTransient<IFileCreatorHelper, FileCreatorHelper>();
-                    services.AddTransient<IInputEvaluator, InputEvaluator>();
+                    services.AddTransient<IInputEvaluatorHelper, InputEvaluatorHelper>();
                 })
                 .UseConsoleLifetime();
 
@@ -33,15 +28,12 @@ public class Program
                 .CreateLogger<Program>();
 
             logger.LogDebug("Starting application");
-
-            // need to find better way to update .csproj
-            // https://stackoverflow.com/questions/72134225/console-logging-in-net-core-6
             
             ExecuteProgram(host, args, logger);
 
-            logger.LogDebug("File successfully written. Application will shutdown now.");
+            logger.LogDebug("Command successfully executed. Application will shutdown now.");
         } 
-        catch (Exception ex) {
+        catch (Exception) {
             return (int)AppEnums.EXIT_CODES.ERROR_BAD_COMMAND;
         }
 
@@ -57,13 +49,9 @@ public class Program
     {
         try
         {
-            var inputEvaluator = serviceProvider.Services.GetService<IInputEvaluator>();
+            var _inputEvaluatorHelper = serviceProvider.Services.GetService<IInputEvaluatorHelper>();
             var fileReaderHelper = serviceProvider.Services.GetService<IFileReaderHelper>();
-            // string combinedArgs = default;
-            // if (args != null) {
-            //     combinedArgs = string.Join("", args);
-            // }
-            var userInput = inputEvaluator?.GetFormattedUserInput(ref args);
+            var userInput = _inputEvaluatorHelper?.GetFormattedUserInput(args);
             fileReaderHelper?.ReadInput(userInput);
         }
         catch (Exception)

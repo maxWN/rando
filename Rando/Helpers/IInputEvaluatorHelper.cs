@@ -1,7 +1,6 @@
 using Rando.Common;
-using Rando.Helpers;
 
-public interface IInputEvaluator
+public interface IInputEvaluatorHelper
 {
 
     UserInput GetFormattedUserInput(string[]? args);

@@ -2,10 +2,6 @@ namespace Rando;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
 using Rando.Common;
 using Kurukuru;
 using Rando.Helpers;
@@ -17,7 +13,7 @@ public class FileReaderHelper: IFileReaderHelper {
     private readonly ILogger<FileReaderHelper> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IFileCreatorHelper _fileCreatorHelper;
-    private readonly IInputEvaluator inputEvaluator;
+    private readonly IInputEvaluatorHelper _inputEvaluatorHelper;
 
     #endregion Class Fields
 
@@ -25,33 +21,22 @@ public class FileReaderHelper: IFileReaderHelper {
 
     #region Constructor
 
-    public FileReaderHelper(ILogger<FileReaderHelper> logger, IHttpClientFactory httpClientFactory, IFileCreatorHelper fileCreatorHelper, IInputEvaluator inputEvaluator)
+    public FileReaderHelper(ILogger<FileReaderHelper> logger, IHttpClientFactory httpClientFactory, IFileCreatorHelper fileCreatorHelper, IInputEvaluatorHelper inputEvaluatorHelper)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         _fileCreatorHelper = fileCreatorHelper ?? throw new ArgumentNullException(nameof(fileCreatorHelper));
-        this.inputEvaluator = inputEvaluator ?? throw new ArgumentNullException(nameof(inputEvaluator));
+        _inputEvaluatorHelper = inputEvaluatorHelper ?? throw new ArgumentNullException(nameof(inputEvaluatorHelper));
     }
 
     #endregion Constructor
 
     public void ReadInput(UserInput userInput)
     {
-        _logger.LogInformation("Entered {Namespace}.{MethodName}", base.ToString(), nameof(ReadInput));
+        _logger.LogDebug("Entered {Namespace}.{MethodName}", base.ToString(), nameof(ReadInput));
 
-        Console.WriteLine("Prompted.\n");
         FilterInput(userInput);
     }
-
-    /// <summary>
-    /// Prompts user to re-enter data after an invalid or erroneous situation
-    /// </summary>
-    /// <param name="args"></param>
-    // public void RetryInput() {
-    //     Console.WriteLine(AppConstants.USER_DIRECTIONS);
-    //     var input = Console.ReadLine();            
-    //     ReadInput(input?.Split(" "));
-    // }
 
     /// <summary>
     /// Shows output from API call
@@ -102,49 +87,6 @@ public class FileReaderHelper: IFileReaderHelper {
         }
         return default;
     }
-
-    /// <summary>
-    /// Determines if user input is valid
-    /// </summary>
-    /// <param name="args"></param>
-    /// <returns></returns>
-    // private bool IsUserInputValid(ref string[]? args) {
-
-    //     bool isValid = true;
-
-    //     if (args == null || args?.Length == 0)
-    //     {
-    //         return !isValid;
-    //     }
-    //     if ((args?.Length) <= 1) {
-    //         Array.Resize(ref args, args.Length+1);
-    //         args[1] = "1";
-    //     }
-    //     if (string.IsNullOrWhiteSpace(args?[0]))
-    //     {
-    //         Console.WriteLine($"{AppConstants.USER_DIRECTIONS}");
-    //         return !isValid;
-    //     }
-    //     if (args[1].Any(x => !char.IsDigit(x))) {
-    //         Console.WriteLine($"{AppConstants.USER_DIRECTIONS}");
-    //         return !isValid;
-    //     }
-    //     // begin evaluating flags and their accompanied args
-    //     if (args.Length > 2) {
-    //         return IsFlagValid(args) ? !isValid : isValid; 
-    //     }
-
-    //     return isValid;
-    // }
-
-    /// <summary>
-    /// Evaluates flags in argument to determine if they are valid
-    /// </summary>
-    /// <param name="args"></param>
-    /// <returns></returns>
-    // private bool IsFlagValid(string [] args) {
-    //     return (!args[2].Equals("--file-output") && !args[2].Equals("--db-output"));
-    // }
 
     /// <summary>
     /// Filters user input by first argument
