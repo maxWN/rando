@@ -10,7 +10,9 @@ public class Program
 {
     public static int Main(string[] args)
     {
-        try {
+        #pragma warning disable warning-list
+        try
+        {
             var serviceProvider = new HostBuilder()
             .ConfigureServices((hostContext, services) =>
                 {
@@ -38,6 +40,7 @@ public class Program
         }
 
         return (int)AppEnums.EXIT_CODES.SUCCESS;
+        #pragma warning restore warning-list
     }
 
     /// <summary>
