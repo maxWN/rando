@@ -43,11 +43,11 @@ public class InputRouterHelper : IInputRouterHelper
     /// <returns></returns>
     public async Task<string> HandleUserSelectionAsync(UserInput userInput)
     {
-        var apiTask = GetMockDataAsync(userInput);
         string result = default;
 
         try
         {
+            var apiTask = GetMockDataAsync(userInput);
             await Spinner.StartAsync("Loading...", async () =>
             {
                 result = await apiTask;
@@ -81,10 +81,9 @@ public class InputRouterHelper : IInputRouterHelper
     /// <returns></returns>
     public async Task<string> GetMockDataAsync(UserInput userInput)
     {
-        var httpClient = _httpClientFactory.CreateClient("randomDataApi");
-
         try
         {
+            var httpClient = _httpClientFactory.CreateClient("randomDataApi");
             var response = await httpClient.GetAsync(requestUri: $"{userInput.DataType.ToLowerInvariant()}?size={userInput.Quantity}&is_xml=true");
             var data = await response.Content.ReadAsStringAsync();
             return data;
@@ -107,37 +106,37 @@ public class InputRouterHelper : IInputRouterHelper
         {
             case DataType.USERS:
                 Console.WriteLine("User choosen");
-                this.HandleUserSelectionAsync(userInput).Wait();
+                HandleUserSelectionAsync(userInput).Wait();
                 break;
 
             case DataType.BANKS:
                 Console.WriteLine("Bank choosen.");
-                this.HandleUserSelectionAsync(userInput).Wait();
+                HandleUserSelectionAsync(userInput).Wait();
                 break;
 
             case DataType.APPLIANCES:
                 Console.WriteLine("Appliance choosen.");
-                this.HandleUserSelectionAsync(userInput).Wait();
+                HandleUserSelectionAsync(userInput).Wait();
                 break;
 
             case DataType.CREDIT_CARDS:
                 Console.WriteLine("Credit choosen.");
-                this.HandleUserSelectionAsync(userInput).Wait();
+                HandleUserSelectionAsync(userInput).Wait();
                 break;
 
             case DataType.ADDRESSES:
                 Console.WriteLine("Addresses choosen.");
-                this.HandleUserSelectionAsync(userInput).Wait();
+                HandleUserSelectionAsync(userInput).Wait();
                 break;
 
             case DataType.BLOOD_TYPES:
                 Console.WriteLine("Blood Types choosen.");
-                this.HandleUserSelectionAsync(userInput).Wait();
+                HandleUserSelectionAsync(userInput).Wait();
                 break;
 
             case DataType.BEERS:
                 Console.WriteLine("Beers choosen.");
-                this.HandleUserSelectionAsync(userInput).Wait();
+                HandleUserSelectionAsync(userInput).Wait();
                 break;
 
             default:
