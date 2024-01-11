@@ -2,7 +2,7 @@ using Rando.Common;
 
 namespace Rando;
 
-public interface IFileReaderHelper {
+public interface IInputRouterHelper {
 
     /// <summary>
     /// Read input from console to begin merging files

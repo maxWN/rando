@@ -19,10 +19,15 @@ public class FileCreatorHelper : IFileCreatorHelper
             return;
         }
 
+        if (!Directory.Exists(path))
+        {
+            throw new DirectoryNotFoundException();
+        }
+
         try
         {
             // Create the file, or overwrite if the file exists.
-            using (FileStream fs = File.Create(".\\output.txt")) // + fileType))
+            using (FileStream fs = File.Create($"{path}{fileType}"))
             {
                 byte[] info = new UTF8Encoding(true).GetBytes(fileContent);
                 // Add some information to the file.
@@ -31,7 +36,7 @@ public class FileCreatorHelper : IFileCreatorHelper
         }
         catch (UnauthorizedAccessException ex)
         {
-            Console.WriteLine($"{ex.ToString()} - Please run rando as an admin to create your file.");
+            Console.WriteLine($"{ex.Message.ToString()} - Please run rando as an admin to create your file.");
             throw;
         }
         catch (Exception ex)

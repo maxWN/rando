@@ -1,8 +1,10 @@
 using Rando.Common;
 
+namespace Rando.Helpers;
+
 public interface IInputEvaluatorHelper
 {
 
-    UserInput GetFormattedUserInput(string[]? args);
+    UserInput GetUserInputObject(string[]? args);
 
 }

@@ -1,27 +1,24 @@
-namespace Rando;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using Rando.Common;
 using Kurukuru;
 using Rando.Helpers;
 
-public class FileReaderHelper: IFileReaderHelper {
+namespace Rando;
 
+public class InputRouterHelper : IInputRouterHelper
+{
     #region Class Fields
 
-    private readonly ILogger<FileReaderHelper> _logger;
+    private readonly ILogger<InputRouterHelper> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IFileCreatorHelper _fileCreatorHelper;
     private readonly IInputEvaluatorHelper _inputEvaluatorHelper;
 
     #endregion Class Fields
 
-    private Dictionary<string, string> UserInputDictionary = new Dictionary<string, string>();
-
     #region Constructor
 
-    public FileReaderHelper(ILogger<FileReaderHelper> logger, IHttpClientFactory httpClientFactory, IFileCreatorHelper fileCreatorHelper, IInputEvaluatorHelper inputEvaluatorHelper)
+    public InputRouterHelper(ILogger<InputRouterHelper> logger, IHttpClientFactory httpClientFactory, IFileCreatorHelper fileCreatorHelper, IInputEvaluatorHelper inputEvaluatorHelper)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
@@ -44,24 +41,33 @@ public class FileReaderHelper: IFileReaderHelper {
     /// <param name="dataType"></param>
     /// <param name="quantity"></param>
     /// <returns></returns>
-    public async Task<string> HandleUserSelectionAsync(UserInput userInput) {
-
+    public async Task<string> HandleUserSelectionAsync(UserInput userInput)
+    {
         var apiTask = GetMockDataAsync(userInput);
         string result = default;
 
-        try {
-            await Spinner.StartAsync("Loading...", async () => {
+        try
+        {
+            await Spinner.StartAsync("Loading...", async () =>
+            {
                 result = await apiTask;
             });
             if (!string.IsNullOrWhiteSpace(result) && !string.IsNullOrWhiteSpace(userInput.FlagType)
-                && userInput.FlagType.Equals(FlagType.FileFlag)) {
+                && userInput.FlagType.Equals(FlagType.FileFlag))
+            {
                 _fileCreatorHelper.CreateFile(userInput.FilePath, result, userInput.FileName);
             }
         }
-        finally {
+        catch (Exception ex)
+        {
+            _logger.LogError("The following exception occurred: {Exception}", ex.Message.ToString());
+            throw;
+        }
+        finally
+        {
             Console.Beep();
         }
-        
+
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine($"{result}");
         return result.ToString();
@@ -73,16 +79,19 @@ public class FileReaderHelper: IFileReaderHelper {
     /// <param name="dataType"></param>
     /// <param name="quantity"></param>
     /// <returns></returns>
-    public async Task<string> GetMockDataAsync(UserInput userInput) {
+    public async Task<string> GetMockDataAsync(UserInput userInput)
+    {
         var httpClient = _httpClientFactory.CreateClient("randomDataApi");
 
-        try {
+        try
+        {
             var response = await httpClient.GetAsync(requestUri: $"{userInput.DataType.ToLowerInvariant()}?size={userInput.Quantity}&is_xml=true");
             var data = await response.Content.ReadAsStringAsync();
             return data;
         }
-        catch (Exception ex) {
-            _logger.LogError("Request failed : {Exception}", ex.ToString());
+        catch (Exception ex)
+        {
+            _logger.LogError("Random API request failed: {Exception}", ex.Message.ToString());
             throw;
         }
         return default;
@@ -92,36 +101,48 @@ public class FileReaderHelper: IFileReaderHelper {
     /// Filters user input by first argument
     /// </summary>
     /// <param name="args"></param>
-    public void FilterInput(UserInput userInput) 
+    public void FilterInput(UserInput userInput)
     {
-        // TODO: strongly consider splitting out remaining args into a new str []
-        // pass remaining args into the handle method, so you can reduce total number of args in method def
-
-        switch(userInput.DataType) {
+        switch (userInput.DataType)
+        {
             case DataType.USERS:
                 Console.WriteLine("User choosen");
                 this.HandleUserSelectionAsync(userInput).Wait();
                 break;
+
             case DataType.BANKS:
                 Console.WriteLine("Bank choosen.");
                 this.HandleUserSelectionAsync(userInput).Wait();
                 break;
-            case DataType.APPLIANCES: 
+
+            case DataType.APPLIANCES:
                 Console.WriteLine("Appliance choosen.");
-                this.HandleUserSelectionAsync(userInput).Wait();                    
+                this.HandleUserSelectionAsync(userInput).Wait();
                 break;
+
             case DataType.CREDIT_CARDS:
                 Console.WriteLine("Credit choosen.");
                 this.HandleUserSelectionAsync(userInput).Wait();
                 break;
+
             case DataType.ADDRESSES:
                 Console.WriteLine("Addresses choosen.");
                 this.HandleUserSelectionAsync(userInput).Wait();
                 break;
+
+            case DataType.BLOOD_TYPES:
+                Console.WriteLine("Blood Types choosen.");
+                this.HandleUserSelectionAsync(userInput).Wait();
+                break;
+
+            case DataType.BEERS:
+                Console.WriteLine("Beers choosen.");
+                this.HandleUserSelectionAsync(userInput).Wait();
+                break;
+
             default:
                 Console.WriteLine($"{AppConstants.USER_DIRECTIONS}");
                 break;
-
         }
     }
 }

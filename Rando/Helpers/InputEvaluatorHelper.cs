@@ -3,6 +3,8 @@ using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Rando.Common;
 
+namespace Rando.Helpers;
+
 public class InputEvaluatorHelper : IInputEvaluatorHelper
 {
     private readonly ILogger<InputEvaluatorHelper> logger;
@@ -17,7 +19,7 @@ public class InputEvaluatorHelper : IInputEvaluatorHelper
     /// </summary>
     /// <param name="args"></param>
     /// <returns></returns>
-    public UserInput GetFormattedUserInput(string[]? args)
+    public UserInput GetUserInputObject(string[]? args)
     {
         if (args == null || args?.Length == 0)
         {
@@ -25,6 +27,13 @@ public class InputEvaluatorHelper : IInputEvaluatorHelper
             throw new ArgumentException("Invalid arguments supplied");
         }
         UserInput userInput = new();
+
+        if (args[0].Equals("--help"))
+        {
+            Console.WriteLine(AppConstants.USER_DIRECTIONS + "\n");
+            // TODO: Consider better way to break out of method!
+            throw new Exception();
+        }
 
         try
         {

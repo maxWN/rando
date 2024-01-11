@@ -8,7 +8,7 @@ public class UserInput
     { }
 
     [Required]
-    [StringRange(AllowableValues = new[] { Common.DataType.USERS, Common.DataType.ADDRESSES, Common.DataType.APPLIANCES, Common.DataType.BANKS, Common.DataType.CREDIT_CARDS }, ErrorMessage = "Type must be a defined type.")]
+    [StringRange(AllowableValues = new[] { Common.DataType.USERS, Common.DataType.ADDRESSES, Common.DataType.APPLIANCES, Common.DataType.BANKS, Common.DataType.CREDIT_CARDS, Common.DataType.BLOOD_TYPES, Common.DataType.BEERS }, ErrorMessage = "Type must be a defined type.")]
     public string DataType { get; set; }
 
     [Range(1, 100, ErrorMessage = "Value cannot exceed 100.")]
