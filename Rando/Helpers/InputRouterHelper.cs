@@ -52,6 +52,7 @@ public class InputRouterHelper : IInputRouterHelper
             {
                 result = await apiTask;
             });
+            // TODO: Extract the following logic to new function when implementing DB & API handling logic
             if (!string.IsNullOrWhiteSpace(result) && !string.IsNullOrWhiteSpace(userInput.FlagType)
                 && userInput.FlagType.Equals(FlagType.FileFlag))
             {
@@ -69,7 +70,7 @@ public class InputRouterHelper : IInputRouterHelper
         }
 
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"{result}");
+        Console.WriteLine($"\n{result}\n");
         return result.ToString();
     }
 

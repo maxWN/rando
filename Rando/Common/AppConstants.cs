@@ -10,6 +10,6 @@ public static class AppConstants {
     /// <summary>
     /// Instructions shown when user either uses help command or makes a mistake
     /// </summary>
-    public const string USER_DIRECTIONS = "Usage: random [arguments] [options] \n\nArguments: \n* Data Type\tRepresents types in Random API docs\n* Quantity (OPTIONAL)\tAmount of entries you want Random API to return \n\nOptions: \n* --help\tPrint list of rando commands with details on proper usage\n* --file-output <file-extension>\tIndicates that a file will be created containing the randomized data\n* --db-output <sql-db-dialect>\tIndicates randomized data will be inserted into SQL DB of choice (requires updated DB config file)";
+    public const string USER_DIRECTIONS = "Usage: rando.exe [arguments] [options] \n\nArguments: \n* Data Type\tRepresents types in Random API docs\n* Quantity (OPTIONAL)\tAmount of entries you want Random API to return \n\nOptions: \n* --help\t\t\t\t\tPrint list of rando commands with details on proper usage\n* --file-output <file-extension> <file-name>\tIndicates that a file will be created containing the randomized data\n* --db-output <sql-db-dialect>\t\t\tIndicates randomized data will be inserted into SQL DB of choice (requires updated DB config file)";
 
 }

@@ -165,8 +165,9 @@ public class InputEvaluatorHelper : IInputEvaluatorHelper
             Console.ForegroundColor = ConsoleColor.Red;
             foreach (var result in validationResults)
             {
-                Console.WriteLine($"*\t {result}");
+                Console.WriteLine($"*\t{result}");
             }
+            Console.WriteLine("\n");
             throw new ArgumentException("Invalid arguments supplied");
         }
     }

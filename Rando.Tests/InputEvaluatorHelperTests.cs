@@ -3,7 +3,7 @@ namespace Rando.Tests;
 /// <summary>
 /// TODO: Write real unit tests
 /// </summary>
-public class Tests
+public class InputEvaluatorHelperTests
 {
     [SetUp]
     public void Setup()

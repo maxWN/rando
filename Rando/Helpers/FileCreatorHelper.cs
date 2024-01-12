@@ -36,7 +36,7 @@ public class FileCreatorHelper : IFileCreatorHelper
         }
         catch (UnauthorizedAccessException ex)
         {
-            Console.WriteLine($"{ex.Message.ToString()} - Please run rando as an admin to create your file.");
+            Console.WriteLine($"{ex.Message} - Please run rando as an admin to create your file.");
             throw;
         }
         catch (Exception ex)
