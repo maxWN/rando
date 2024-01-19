@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using System;
 using Rando.Common;
 using Rando.Helpers;
+using Microsoft.Extensions.Configuration;
 
 public class Program
 {
@@ -14,6 +15,10 @@ public class Program
 #pragma warning disable warning-list
         try
         {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false)
+                .Build();
+
             var serviceProvider = new HostBuilder()
             .ConfigureServices((hostContext, services) =>
                 {
@@ -24,7 +29,12 @@ public class Program
                     services.AddTransient<IInputRouterHelper, InputRouterHelper>();
                     services.AddTransient<IFileCreatorHelper, FileCreatorHelper>();
                     services.AddTransient<IInputEvaluatorHelper, InputEvaluatorHelper>();
+                    //if (config["DatabaseConfiguration:Dialect"].ToString().Equals("MySQL")) {
+                    //    services.AddTransient<ISqlDbBuilder, MySqlDbBuilder>();
+                    //}
                 })
+                .ConfigureAppConfiguration(options => options.AddJsonFile("appsettings.json"))
+                .ConfigureLogging(options => options.AddConsole())
                 .UseConsoleLifetime();
 
             var host = serviceProvider.Build();
@@ -60,10 +70,9 @@ public class Program
             var userInput = _inputEvaluatorHelper?.GetUserInputObject(args);
             fileReaderHelper?.ReadInput(userInput);
         }
-        catch (Exception)
+        catch (Exception Ex)
         {
-            // logger.LogDebug("Read and/or write operations failed: {Exception}.\nApplication will shutdown now.", Ex);
-            // Environment.Exit(1);
+            logger.LogDebug("Read and/or write operations failed: {Exception}.\nApplication will shutdown now.", Ex.Message);
             throw;
         }
     }
