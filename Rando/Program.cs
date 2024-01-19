@@ -7,6 +7,8 @@ using System;
 using Rando.Common;
 using Rando.Helpers;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Http;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 public class Program
 {
@@ -26,11 +28,12 @@ public class Program
                     {
                         httpClient.BaseAddress = new Uri($"{AppConstants.RANDOM_DATA_API_BASE_URL}");
                     });
+                    services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
                     services.AddTransient<IInputRouterHelper, InputRouterHelper>();
                     services.AddTransient<IFileCreatorHelper, FileCreatorHelper>();
                     services.AddTransient<IInputEvaluatorHelper, InputEvaluatorHelper>();
                     //if (config["DatabaseConfiguration:Dialect"].ToString().Equals("MySQL")) {
-                    //    services.AddTransient<ISqlDbBuilder, MySqlDbBuilder>();
+                    //    services.AddTransient<ISqlDbBuilder, SqliteDbBuilder>();
                     //}
                 })
                 .ConfigureAppConfiguration(options => options.AddJsonFile("appsettings.json"))
@@ -60,6 +63,7 @@ public class Program
     /// Prompt user for input
     /// </summary>
     /// <param name="serviceProvider"></param>
+    /// <param name="args"></param>
     /// <param name="logger"></param>
     private static void ExecuteProgram(IHost serviceProvider, string[] args, ILogger<Program> logger)
     {
