@@ -1,8 +1,10 @@
 # Rando
 
-A CLI tool that utilizes the [Random Data API](https://random-data-api.com/) to generate mock data.
-
+<p align="center">
 ![image info](https://github.com/maxWN/rando/blob/main/Rando/Assets/random-api-icon.PNG)
+</p>
+
+A CLI tool that utilizes the [Random Data API](https://random-data-api.com/) to generate mock data.
 
 This tool is still in development, but will offer all of the following features:
 * Create new files anywhere on your PC with mock data
