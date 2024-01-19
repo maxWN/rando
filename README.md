@@ -1,7 +1,7 @@
 # Rando
 
 <p align="center">
-![image info](https://github.com/maxWN/rando/blob/main/Rando/Assets/random-api-icon.PNG)
+      <img src="https://github.com/maxWN/rando/blob/main/Rando/Assets/random-api-icon.PNG" alt="Random API icon">
 </p>
 
 A CLI tool that utilizes the [Random Data API](https://random-data-api.com/) to generate mock data.
