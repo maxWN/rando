@@ -33,7 +33,7 @@ public class Program
                     services.AddTransient<IFileCreatorHelper, FileCreatorHelper>();
                     services.AddTransient<IInputEvaluatorHelper, InputEvaluatorHelper>();
                     //if (config["DatabaseConfiguration:Dialect"].ToString().Equals("MySQL")) {
-                    //    services.AddTransient<ISqlDbBuilder, SqliteDbBuilder>();
+                    //    services.AddTransient<ISqlDbBuilder, MySqlDbBuilder>();
                     //}
                 })
                 .ConfigureAppConfiguration(options => options.AddJsonFile("appsettings.json"))
@@ -70,9 +70,9 @@ public class Program
         try
         {
             var _inputEvaluatorHelper = serviceProvider.Services.GetService<IInputEvaluatorHelper>();
-            var fileReaderHelper = serviceProvider.Services.GetService<IInputRouterHelper>();
+            var inputRouterHelper = serviceProvider.Services.GetService<IInputRouterHelper>();
             var userInput = _inputEvaluatorHelper?.GetUserInputObject(args);
-            fileReaderHelper?.ReadInput(userInput);
+            inputRouterHelper?.HandleUserInput(userInput);
         }
         catch (Exception Ex)
         {

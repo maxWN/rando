@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Rando.Common;
 using Kurukuru;
 using Rando.Helpers;
+using Microsoft.Extensions.Configuration;
 
 namespace Rando;
 
@@ -13,24 +14,26 @@ public class InputRouterHelper : IInputRouterHelper
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IFileCreatorHelper _fileCreatorHelper;
     private readonly IInputEvaluatorHelper _inputEvaluatorHelper;
+    private readonly IConfiguration configuration;
 
     #endregion Class Fields
 
     #region Constructor
 
-    public InputRouterHelper(ILogger<InputRouterHelper> logger, IHttpClientFactory httpClientFactory, IFileCreatorHelper fileCreatorHelper, IInputEvaluatorHelper inputEvaluatorHelper)
+    public InputRouterHelper(ILogger<InputRouterHelper> logger, IHttpClientFactory httpClientFactory, IFileCreatorHelper fileCreatorHelper, IInputEvaluatorHelper inputEvaluatorHelper, IConfiguration configuration)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         _fileCreatorHelper = fileCreatorHelper ?? throw new ArgumentNullException(nameof(fileCreatorHelper));
         _inputEvaluatorHelper = inputEvaluatorHelper ?? throw new ArgumentNullException(nameof(inputEvaluatorHelper));
+        this.configuration = configuration;
     }
 
     #endregion Constructor
 
-    public void ReadInput(UserInput userInput)
+    public void HandleUserInput(UserInput userInput)
     {
-        _logger.LogDebug("Entered {Namespace}.{MethodName}", base.ToString(), nameof(ReadInput));
+        _logger.LogDebug("Entered {Namespace}.{MethodName}", base.ToString(), nameof(HandleUserInput));
 
         FilterInput(userInput);
     }
@@ -52,7 +55,7 @@ public class InputRouterHelper : IInputRouterHelper
             {
                 result = await apiTask;
             });
-            // TODO: Extract the following logic to new function when implementing DB & API handling logic
+            // TODO: Extract the following logic to new function after implementing DB & API handling logic
             if (!string.IsNullOrWhiteSpace(result) && !string.IsNullOrWhiteSpace(userInput.FlagType)
                 && userInput.FlagType.Equals(FlagType.FileFlag))
             {
@@ -71,7 +74,7 @@ public class InputRouterHelper : IInputRouterHelper
 
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine($"\n{result}\n");
-        return result.ToString();
+        return result?.ToString();
     }
 
     /// <summary>
@@ -106,37 +109,37 @@ public class InputRouterHelper : IInputRouterHelper
         switch (userInput.DataType)
         {
             case DataType.USERS:
-                Console.WriteLine("User choosen");
+                Console.WriteLine("User type choosen.\n");
                 HandleUserSelectionAsync(userInput).Wait();
                 break;
 
             case DataType.BANKS:
-                Console.WriteLine("Bank choosen.");
+                Console.WriteLine("Bank type choosen.\n");
                 HandleUserSelectionAsync(userInput).Wait();
                 break;
 
             case DataType.APPLIANCES:
-                Console.WriteLine("Appliance choosen.");
+                Console.WriteLine("Appliance type choosen.\n");
                 HandleUserSelectionAsync(userInput).Wait();
                 break;
 
             case DataType.CREDIT_CARDS:
-                Console.WriteLine("Credit choosen.");
+                Console.WriteLine("Credit type choosen.\n");
                 HandleUserSelectionAsync(userInput).Wait();
                 break;
 
             case DataType.ADDRESSES:
-                Console.WriteLine("Addresses choosen.");
+                Console.WriteLine("Addresses type choosen.\n");
                 HandleUserSelectionAsync(userInput).Wait();
                 break;
 
             case DataType.BLOOD_TYPES:
-                Console.WriteLine("Blood Types choosen.");
+                Console.WriteLine("Blood type choosen.\n");
                 HandleUserSelectionAsync(userInput).Wait();
                 break;
 
             case DataType.BEERS:
-                Console.WriteLine("Beers choosen.");
+                Console.WriteLine("Beer type choosen.\n");
                 HandleUserSelectionAsync(userInput).Wait();
                 break;
 

@@ -5,10 +5,10 @@ namespace Rando;
 public interface IInputRouterHelper {
 
     /// <summary>
-    /// Read input from console to begin merging files
+    /// Handle validated user input from console to complete command
     /// </summary>
     /// <param name="args"></param>
-    void ReadInput(UserInput userInput);
+    void HandleUserInput(UserInput userInput);
 
     Task<string> GetMockDataAsync(UserInput userInput);
 }
