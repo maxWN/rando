@@ -9,6 +9,7 @@ using Rando.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MySqlConnector;
 
 public class Program
 {
@@ -32,9 +33,11 @@ public class Program
                     services.AddTransient<IInputRouterHelper, InputRouterHelper>();
                     services.AddTransient<IFileCreatorHelper, FileCreatorHelper>();
                     services.AddTransient<IInputEvaluatorHelper, InputEvaluatorHelper>();
-                    //if (config["DatabaseConfiguration:Dialect"].ToString().Equals("MySQL")) {
-                    //    services.AddTransient<ISqlDbBuilder, MySqlDbBuilder>();
-                    //}
+                    if (config["DatabaseConfiguration:Dialect"].ToString().Equals("MySQL"))
+                    {
+                        services.AddTransient<IDbFactory>(_ => new DbFactory(config["DatabaseConfiguration:ConnectionString"]));
+                        services.AddTransient<ISqlDbBuilder, MySqlDbBuilder>();
+                    }
                 })
                 .ConfigureAppConfiguration(options => options.AddJsonFile("appsettings.json"))
                 .ConfigureLogging(options => options.AddConsole())

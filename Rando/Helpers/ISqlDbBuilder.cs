@@ -1,11 +1,13 @@
+using Rando.Common;
 using System.Data.Common;
 
 namespace Rando;
 
-public interface ISqlDbBuilder {
+public interface ISqlDbBuilder 
+{
+    // TODO: Merge these two methods
+    void BuildDataTable(string dbTable, UserInput userInput);
 
-    Task<string> BuildDataTable(string dbName, string dbTable);
-
-    Task<string> InsertTableData<T>(string dbTable, T data);
+    Task<string> InsertTableData<T>(string dbTable, UserInput userInput, List<T> data);
 
 }

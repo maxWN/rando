@@ -14,19 +14,22 @@ public class InputRouterHelper : IInputRouterHelper
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IFileCreatorHelper _fileCreatorHelper;
     private readonly IInputEvaluatorHelper _inputEvaluatorHelper;
-    private readonly IConfiguration configuration;
+    private readonly IConfiguration _configuration;
+    private readonly ISqlDbBuilder _sqlDbBuilder;
 
     #endregion Class Fields
 
     #region Constructor
 
-    public InputRouterHelper(ILogger<InputRouterHelper> logger, IHttpClientFactory httpClientFactory, IFileCreatorHelper fileCreatorHelper, IInputEvaluatorHelper inputEvaluatorHelper, IConfiguration configuration)
+    public InputRouterHelper(ILogger<InputRouterHelper> logger, IHttpClientFactory httpClientFactory, 
+        IFileCreatorHelper fileCreatorHelper, IInputEvaluatorHelper inputEvaluatorHelper, IConfiguration configuration, ISqlDbBuilder sqlDbBuilder)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         _fileCreatorHelper = fileCreatorHelper ?? throw new ArgumentNullException(nameof(fileCreatorHelper));
         _inputEvaluatorHelper = inputEvaluatorHelper ?? throw new ArgumentNullException(nameof(inputEvaluatorHelper));
-        this.configuration = configuration;
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        _sqlDbBuilder = sqlDbBuilder ?? throw new ArgumentNullException(nameof(sqlDbBuilder));
     }
 
     #endregion Constructor
@@ -34,8 +37,15 @@ public class InputRouterHelper : IInputRouterHelper
     public void HandleUserInput(UserInput userInput)
     {
         _logger.LogDebug("Entered {Namespace}.{MethodName}", base.ToString(), nameof(HandleUserInput));
-
-        FilterInput(userInput);
+        try
+        {
+            FilterInput(userInput);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("The following exception occurred: {ErrorMessage} {StackTrace}", ex.Message, ex.StackTrace);
+            throw;
+        }
     }
 
     /// <summary>
@@ -50,21 +60,17 @@ public class InputRouterHelper : IInputRouterHelper
 
         try
         {
-            var apiTask = GetMockDataAsync(userInput);
             await Spinner.StartAsync("Loading...", async () =>
             {
-                result = await apiTask;
+                result = await GetMockDataAsync(userInput);
             });
             // TODO: Extract the following logic to new function after implementing DB & API handling logic
-            if (!string.IsNullOrWhiteSpace(result) && !string.IsNullOrWhiteSpace(userInput.FlagType)
-                && userInput.FlagType.Equals(FlagType.FileFlag))
-            {
-                _fileCreatorHelper.CreateFile(userInput.FilePath, result, userInput.FileName);
-            }
+            if (!string.IsNullOrWhiteSpace(result) && !string.IsNullOrWhiteSpace(userInput.FlagType))
+                HandleAdditionalUserInput(userInput, result);
         }
         catch (Exception ex)
         {
-            _logger.LogError("The following exception occurred: {Exception}", ex.Message.ToString());
+            _logger.LogError("The following exception occurred: {ErrorMessage} {StackTrace}", ex.Message, ex.StackTrace);
             throw;
         }
         finally
@@ -75,6 +81,34 @@ public class InputRouterHelper : IInputRouterHelper
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine($"\n{result}\n");
         return result?.ToString();
+    }
+
+    public void HandleAdditionalUserInput(UserInput userInput, string result)
+    {
+        try
+        {
+            if (userInput.FlagType.Equals(FlagType.FileFlag))
+            {
+                _fileCreatorHelper.CreateFile(userInput.FilePath, result, userInput.FileName);
+            }
+            else if (userInput.FlagType.Equals(FlagType.DatabaseFlag))
+            {                
+                _sqlDbBuilder.BuildDataTable(userInput.TableName, userInput);
+            }
+            else if (userInput.FlagType.Equals(FlagType.ApiFlag))
+            {                
+                //_apiCallerHelper.SendData(null, userInput);
+            }
+            else
+            {
+                throw new ArgumentException();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("The following exception occurred: {ErrorMessage} {StackTrace}", ex.Message, ex.StackTrace);
+            throw;
+        }
     }
 
     /// <summary>
@@ -94,7 +128,7 @@ public class InputRouterHelper : IInputRouterHelper
         }
         catch (Exception ex)
         {
-            _logger.LogError("Random API request failed: {Exception}", ex.Message.ToString());
+            _logger.LogError("Random API request failed: {ErrorMessage} {StackTrace}", ex.Message, ex.StackTrace);
             throw;
         }
         return default;
@@ -110,6 +144,8 @@ public class InputRouterHelper : IInputRouterHelper
         {
             case DataType.USERS:
                 Console.WriteLine("User type choosen.\n");
+                // probably need to use async here instead of Wait():
+                // https://olegignat.com/task-wait-or-await-task/
                 HandleUserSelectionAsync(userInput).Wait();
                 break;
 

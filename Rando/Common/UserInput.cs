@@ -24,7 +24,7 @@ public class UserInput
     public string FilePath { get; set; }
 
     // TODO: Create new attribute to verify arg supplied matches database name specified in config file
-    public string DatabaseName { get; set; }
+    public string TableName { get; set; }
 
     // TODO: Add new regex decorator to check if URL is valid (or matches config property)
     public string ApiUrl { get; set; }

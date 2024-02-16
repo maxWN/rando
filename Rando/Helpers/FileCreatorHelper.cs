@@ -1,11 +1,19 @@
 
 using System.Text;
+using Microsoft.Extensions.Logging;
 using Rando.Common;
 
 namespace Rando.Helpers;
 
 public class FileCreatorHelper : IFileCreatorHelper
 {
+    private readonly ILogger<FileCreatorHelper> _logger;
+
+    public FileCreatorHelper(ILogger<FileCreatorHelper> logger)
+    {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
     /// <summary>
     /// Creates a new file that contains Random API data
     /// </summary>
@@ -37,11 +45,12 @@ public class FileCreatorHelper : IFileCreatorHelper
         catch (UnauthorizedAccessException ex)
         {
             Console.WriteLine($"{ex.Message} - Please run rando as an admin to create your file.");
+            _logger.LogError("The following exception occurred: {ErrorMessage} {StackTrace}", ex.Message, ex.StackTrace);
             throw;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.ToString());
+            _logger.LogError("The following exception occurred: {ErrorMessage} {StackTrace}", ex.Message, ex.StackTrace);
             throw;
         }
     }

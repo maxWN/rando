@@ -19,6 +19,7 @@ public class InputRouterHelperTests
     private Mock<IInputEvaluatorHelper> mockinputEvaluatorHelper;
     private Mock<HttpClient> mockHttpClient;
     private Mock<IConfiguration> mockConfiguration;
+    private Mock<ISqlDbBuilder> mockSqlDbBuilder;
 
     public InputRouterHelperTests()
     {
@@ -28,8 +29,9 @@ public class InputRouterHelperTests
         mockfileCreatorHelper = new Mock<IFileCreatorHelper>();
         mockHttpClient = new Mock<HttpClient>();
         mockConfiguration = new Mock<IConfiguration>();
+        mockSqlDbBuilder = new Mock<ISqlDbBuilder>();
         inputRouterHelperSut = new InputRouterHelper(mockLogger.Object, mockhttpClientFactory.Object,
-            mockfileCreatorHelper.Object, mockinputEvaluatorHelper.Object, mockConfiguration.Object);
+            mockfileCreatorHelper.Object, mockinputEvaluatorHelper.Object, mockConfiguration.Object, mockSqlDbBuilder.Object);
     }
 
     [Test]

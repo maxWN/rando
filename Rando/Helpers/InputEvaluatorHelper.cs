@@ -7,11 +7,11 @@ namespace Rando.Helpers;
 
 public class InputEvaluatorHelper : IInputEvaluatorHelper
 {
-    private readonly ILogger<InputEvaluatorHelper> logger;
+    private readonly ILogger<InputEvaluatorHelper> _logger;
 
     public InputEvaluatorHelper(ILogger<InputEvaluatorHelper> logger)
     {
-        this.logger = logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     /// <summary>
@@ -49,8 +49,9 @@ public class InputEvaluatorHelper : IInputEvaluatorHelper
                 EvaluateFlagProperties(userInput);
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError("The following exception occurred: {ErrorMessage} {StackTrace}", ex.Message, ex.StackTrace);
             throw;
         }
 
@@ -90,7 +91,7 @@ public class InputEvaluatorHelper : IInputEvaluatorHelper
                 break;
 
             case FlagType.DatabaseFlag:
-                userInput.DatabaseName = IsArgPresent(args, 3);
+                userInput.TableName = IsArgPresent(args, 3);
                 break;
 
             case FlagType.ApiFlag:
@@ -117,8 +118,9 @@ public class InputEvaluatorHelper : IInputEvaluatorHelper
                 PrintArgViolations(QuantityValidationResults);
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+
             throw;
         }
     }
@@ -148,11 +150,11 @@ public class InputEvaluatorHelper : IInputEvaluatorHelper
         }
         else if (userInput.FlagType.Equals(FlagType.DatabaseFlag))
         {
-            List<ValidationResult> databaseNameValidationResults = new();
-            bool isDatabaseNameValid = Validator.TryValidateProperty(userInput.DatabaseName, new ValidationContext(userInput, null, null) { MemberName = "DatabaseName" }, databaseNameValidationResults);
-            if (!isDatabaseNameValid)
+            List<ValidationResult> TableNameValidationResults = new();
+            bool isTableNameValid = Validator.TryValidateProperty(userInput.TableName, new ValidationContext(userInput, null, null) { MemberName = "TableName" }, TableNameValidationResults);
+            if (!isTableNameValid)
             {
-                PrintArgViolations(databaseNameValidationResults);
+                PrintArgViolations(TableNameValidationResults);
             }
         }
     }
