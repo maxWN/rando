@@ -1,0 +1,10 @@
+Don't use 'ref' keyword... ever...
+https://stackoverflow.com/questions/635915/when-to-use-ref-and-when-it-is-not-necessary-in-c-sharp
+https://jonskeet.uk/csharp/parameters.html
+
+
+
+// whoa, a new data mocking library made just for C#... how nice...
+// GOOD IDEA! Use Bogus library to generate HUUUUUGE amounts of fake data!
+// Make using the API optional??? :)
+https://www.c-sharpcorner.com/article/unit-testing-in-net-core-bogus-for-fake-data-generation/

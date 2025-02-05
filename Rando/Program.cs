@@ -1,6 +1,4 @@
-﻿namespace Rando;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -11,11 +9,12 @@ using Microsoft.Extensions.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MySqlConnector;
 
+namespace Rando;
+
 public class Program
 {
     public static int Main(string[] args)
     {
-#pragma warning disable warning-list
         try
         {
             var config = new ConfigurationBuilder()
@@ -33,9 +32,11 @@ public class Program
                     services.AddTransient<IInputRouterHelper, InputRouterHelper>();
                     services.AddTransient<IFileCreatorHelper, FileCreatorHelper>();
                     services.AddTransient<IInputEvaluatorHelper, InputEvaluatorHelper>();
-                    if (config["DatabaseConfiguration:Dialect"].ToString().Equals("MySQL"))
+                    ArgumentException.ThrowIfNullOrWhiteSpace(config["DatabaseConfiguration:Dialect"]);
+                    if (config != null && config["DatabaseConfiguration:Dialect"].ToString().Equals("MySQL"))
                     {
-                        services.AddTransient<IDbFactory>(_ => new DbFactory(config["DatabaseConfiguration:ConnectionString"]));
+                        var connStr = config["DatabaseConfiguration:ConnectionString"] ?? throw new ArgumentNullException();
+                        services.AddTransient<IDbFactory>(_ => new DbFactory(connStr));
                         services.AddTransient<ISqlDbBuilder, MySqlDbBuilder>();
                     }
                 })
@@ -44,8 +45,9 @@ public class Program
                 .UseConsoleLifetime();
 
             var host = serviceProvider.Build();
-            var logger = host.Services.GetService<ILoggerFactory>()
-                .CreateLogger<Program>();
+#pragma warning disable CS8604 // Possible null reference argument.
+            ILogger<Program> logger = host.Services.GetService<ILoggerFactory>().CreateLogger<Program>();
+#pragma warning restore CS8604 // Possible null reference argument.
 
             logger.LogDebug("Starting application");
 
@@ -59,7 +61,6 @@ public class Program
         }
 
         return (int)AppEnums.EXIT_CODES.SUCCESS;
-#pragma warning restore warning-list
     }
 
     /// <summary>
@@ -75,7 +76,9 @@ public class Program
             var _inputEvaluatorHelper = serviceProvider.Services.GetService<IInputEvaluatorHelper>();
             var inputRouterHelper = serviceProvider.Services.GetService<IInputRouterHelper>();
             var userInput = _inputEvaluatorHelper?.GetUserInputObject(args);
-            inputRouterHelper?.HandleUserInput(userInput);
+#pragma warning disable CS8604 // Possible null reference argument.
+            inputRouterHelper?.HandleUserInput(userInput: userInput);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
         catch (Exception Ex)
         {

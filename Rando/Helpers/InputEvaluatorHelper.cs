@@ -120,7 +120,6 @@ public class InputEvaluatorHelper : IInputEvaluatorHelper
         }
         catch (Exception ex)
         {
-
             throw;
         }
     }
