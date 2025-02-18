@@ -2,11 +2,11 @@ using System.ComponentModel.DataAnnotations;
 
 public class FileTypeRangeAttribute : ValidationAttribute
 {
-    public string[] AllowableValues { get; set; }
+    public required string[] AllowableValues { get; set; }
 
-    protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+    protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
-        var msg = $"Please enter one of the allowable values: {string.Join(", ", (AllowableValues ?? new string[] { "No allowable values found" }))}.";
+        var msg = $"Please enter one of the allowable values: {string.Join(", ", AllowableValues ?? ["No allowable values found"])}.";
         
         if (value == null || value.ToString().Equals(""))
             return new ValidationResult(msg);

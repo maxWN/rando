@@ -8,37 +8,42 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MySqlConnector;
+using System.Threading.Tasks;
+using Rando.Extensions;
 
 namespace Rando;
 
 public class Program
 {
-    public static int Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
         try
         {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false)
-                .Build();
+            // var config = new ConfigurationBuilder()
+            //     .AddJsonFile("appsettings.json", optional: false)
+            //     .Build();
 
-            var serviceProvider = new HostBuilder()
+            var serviceProvider = Host.CreateDefaultBuilder(args)
             .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddHttpClient("randomDataApi", httpClient =>
-                    {
-                        httpClient.BaseAddress = new Uri($"{AppConstants.RANDOM_DATA_API_BASE_URL}");
-                    });
-                    services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
-                    services.AddTransient<IInputRouterHelper, InputRouterHelper>();
-                    services.AddTransient<IFileCreatorHelper, FileCreatorHelper>();
-                    services.AddTransient<IInputEvaluatorHelper, InputEvaluatorHelper>();
-                    ArgumentException.ThrowIfNullOrWhiteSpace(config["DatabaseConfiguration:Dialect"]);
-                    if (config != null && config["DatabaseConfiguration:Dialect"].ToString().Equals("MySQL"))
-                    {
-                        var connStr = config["DatabaseConfiguration:ConnectionString"] ?? throw new ArgumentNullException();
-                        services.AddTransient<IDbFactory>(_ => new DbFactory(connStr));
-                        services.AddTransient<ISqlDbBuilder, MySqlDbBuilder>();
-                    }
+                    var config = hostContext.Configuration;
+                    services.Configure(config);
+            //         services.AddHttpClient("randomDataApi", httpClient =>
+            //         {
+            //             httpClient.BaseAddress = new Uri($"{AppConstants.RANDOM_DATA_API_BASE_URL}");
+            //             httpClient.Timeout = TimeSpan.FromSeconds(10);
+            //         });
+            //         services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
+            //         services.AddTransient<IInputRouterHelper, InputRouterHelper>();
+            //         services.AddTransient<IFileCreatorHelper, FileCreatorHelper>();
+            //         services.AddTransient<IInputEvaluatorHelper, InputEvaluatorHelper>();
+            //         // ArgumentException.ThrowIfNullOrEmpty(config["DatabaseConfiguration:Dialect"]);
+            //         // if (config != null && config["DatabaseConfiguration:Dialect"].ToString().Equals("MySQL"))
+            //         // {
+            //         //     var connStr = config["DatabaseConfiguration:ConnectionString"] ?? throw new ArgumentNullException();
+            //         //     services.AddTransient<IDbFactory>(_ => new DbFactory(connStr));
+            //         //     services.AddTransient<ISqlDbBuilder, MySqlDbBuilder>();
+            //         // }
                 })
                 .ConfigureAppConfiguration(options => options.AddJsonFile("appsettings.json"))
                 .ConfigureLogging(options => options.AddConsole())
@@ -51,7 +56,7 @@ public class Program
 
             logger.LogDebug("Starting application");
 
-            ExecuteProgram(host, args, logger);
+            await ExecuteProgramAsync(host, args, logger);
 
             logger.LogDebug("Command successfully executed. Application will shutdown now.");
         }
@@ -69,20 +74,18 @@ public class Program
     /// <param name="serviceProvider"></param>
     /// <param name="args"></param>
     /// <param name="logger"></param>
-    private static void ExecuteProgram(IHost serviceProvider, string[] args, ILogger<Program> logger)
+    private static async Task ExecuteProgramAsync(IHost serviceProvider, string[] args, ILogger<Program> logger)
     {
         try
         {
-            var _inputEvaluatorHelper = serviceProvider.Services.GetService<IInputEvaluatorHelper>();
+            var inputEvaluatorHelper = serviceProvider.Services.GetService<IInputEvaluatorHelper>();
             var inputRouterHelper = serviceProvider.Services.GetService<IInputRouterHelper>();
-            var userInput = _inputEvaluatorHelper?.GetUserInputObject(args);
-#pragma warning disable CS8604 // Possible null reference argument.
-            inputRouterHelper?.HandleUserInput(userInput: userInput);
-#pragma warning restore CS8604 // Possible null reference argument.
+            var userInput = inputEvaluatorHelper?.GetUserInputObject(args) ?? throw new ArgumentNullException();
+            await inputRouterHelper?.HandleUserInputAsync(userInput: userInput);
         }
-        catch (Exception Ex)
+        catch (Exception ex)
         {
-            logger.LogDebug("Read and/or write operations failed: {Exception}.\nApplication will shutdown now.", Ex.Message);
+            logger.LogDebug(ex, "Read and/or write operations failed: {Exception}.\nApplication will shutdown now.", ex.Message);
             throw;
         }
     }

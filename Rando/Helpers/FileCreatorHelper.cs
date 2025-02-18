@@ -45,12 +45,12 @@ public class FileCreatorHelper : IFileCreatorHelper
         catch (UnauthorizedAccessException ex)
         {
             Console.WriteLine($"{ex.Message} - Please run rando as an admin to create your file.");
-            _logger.LogError("The following exception occurred: {ErrorMessage} {StackTrace}", ex.Message, ex.StackTrace);
+            _logger.LogError(ex, "The following exception occurred: {ErrorMessage} {StackTrace}", ex.Message, ex.StackTrace);
             throw;
         }
         catch (Exception ex)
         {
-            _logger.LogError("The following exception occurred: {ErrorMessage} {StackTrace}", ex.Message, ex.StackTrace);
+            _logger.LogError(ex, "The following exception occurred: {ErrorMessage} {StackTrace}", ex.Message, ex.StackTrace);
             throw;
         }
     }
