@@ -1,12 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Logging;
 
-namespace Rando.Helpers
+using Rando.Models;
+
+namespace Rando.Helpers;
+
+public class ApiCallerHelper : IApiCallerHelper<Bank>
 {
-    public class ApiCallerHelper : IApiCallerHelper
+    private readonly ILogger<ApiCallerHelper> _logger;
+
+    public ApiCallerHelper(ILogger<ApiCallerHelper> logger)
     {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
+    /// <summary>
+    /// TODO: build out; make async; refactor interface...
+    /// </summary>
+    /// <param name="uri"></param>
+    /// <param name="dataType"></param>
+    /// <returns></returns>
+    public Task<IEnumerable<Bank>> GetExternalDataAsync(string uri, string dataType)
+    {
+        _logger.LogInformation("Entering {Class}.{Method}", base.ToString(), nameof(GetExternalDataAsync));
+        throw new NotImplementedException();
     }
 }

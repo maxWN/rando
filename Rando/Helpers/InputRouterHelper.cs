@@ -135,6 +135,7 @@ public class InputRouterHelper : IInputRouterHelper
         {
             var httpClient = _httpClientFactory.CreateClient("randomDataApi");
             var response = await httpClient.GetAsync(requestUri: $"{userInput.DataType.ToLowerInvariant()}?size={userInput.Quantity}&is_xml=true");
+            response.EnsureSuccessStatusCode();
             var data = await response.Content.ReadAsStringAsync();
             return data;
         }
