@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Rando.Helpers;
 
-namespace Rando.Helpers
+public interface IApiCallerHelper<T>
 {
-    public interface IApiCallerHelper
-    {
-    }
+    Task<IEnumerable<T>> GetExternalDataAsync(string uri, string dataType);
 }
