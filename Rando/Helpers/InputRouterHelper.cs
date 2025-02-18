@@ -58,8 +58,7 @@ public class InputRouterHelper : IInputRouterHelper
     /// <summary>
     /// Shows output from API call
     /// </summary>
-    /// <param name="dataType"></param>
-    /// <param name="quantity"></param>
+    /// <param name="userInput"></param>
     /// <returns></returns>
     public async Task<string?> HandleUserSelectionAsync(UserInput userInput)
     {
@@ -99,11 +98,13 @@ public class InputRouterHelper : IInputRouterHelper
                 _fileCreatorHelper.CreateFile(userInput.FilePath, result, userInput.FileName);
             }
             else if (userInput.FlagType.Equals(FlagType.DatabaseFlag))
-            {                
+            {
+                throw new NotImplementedException("Feature isn't implemented yet.");
                 // _sqlDbBuilder.BuildDataTable(userInput.TableName, userInput);
             }
             else if (userInput.FlagType.Equals(FlagType.ApiFlag))
-            {                
+            {
+                throw new NotImplementedException("Feature isn't implemented yet.");
                 //_apiCallerHelper.SendData(null, userInput);
             }
             else
@@ -126,8 +127,7 @@ public class InputRouterHelper : IInputRouterHelper
     /// <summary>
     /// Makes request to API to fetch mock data
     /// </summary>
-    /// <param name="dataType"></param>
-    /// <param name="quantity"></param>
+    /// <param name="userInput"></param>
     /// <returns></returns>
     public async Task<string> GetMockDataAsync(UserInput userInput)
     {
@@ -147,9 +147,9 @@ public class InputRouterHelper : IInputRouterHelper
     }
 
     /// <summary>
-    /// Filters user input by first argument
+    /// Filters user input by DataType property
     /// </summary>
-    /// <param name="args"></param>
+    /// <param name="userInput"></param>
     public async Task FilterInputAsync(UserInput userInput)
     {
         switch (userInput.DataType)
