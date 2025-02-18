@@ -1,6 +1,6 @@
 using Rando.Common;
 
-namespace Rando;
+namespace Rando.Helpers;
 
 public interface IInputRouterHelper {
 
@@ -8,7 +8,9 @@ public interface IInputRouterHelper {
     /// Handle validated user input from console to complete command
     /// </summary>
     /// <param name="args"></param>
-    void HandleUserInput(UserInput userInput);
+    Task HandleUserInputAsync(UserInput userInput);
 
     Task<string> GetMockDataAsync(UserInput userInput);
+
+    void HandleAdditionalUserInput(UserInput userInput, string result);
 }

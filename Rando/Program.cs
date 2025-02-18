@@ -1,55 +1,37 @@
-﻿namespace Rando;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
-using System;
 using Rando.Common;
 using Rando.Helpers;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Http;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using MySqlConnector;
+using Rando.Extensions;
+
+namespace Rando;
 
 public class Program
 {
-    public static int Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
-#pragma warning disable warning-list
         try
         {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false)
-                .Build();
-
-            var serviceProvider = new HostBuilder()
+            var serviceProvider = Host.CreateDefaultBuilder(args)
             .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddHttpClient("randomDataApi", httpClient =>
-                    {
-                        httpClient.BaseAddress = new Uri($"{AppConstants.RANDOM_DATA_API_BASE_URL}");
-                    });
-                    services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
-                    services.AddTransient<IInputRouterHelper, InputRouterHelper>();
-                    services.AddTransient<IFileCreatorHelper, FileCreatorHelper>();
-                    services.AddTransient<IInputEvaluatorHelper, InputEvaluatorHelper>();
-                    if (config["DatabaseConfiguration:Dialect"].ToString().Equals("MySQL"))
-                    {
-                        services.AddTransient<IDbFactory>(_ => new DbFactory(config["DatabaseConfiguration:ConnectionString"]));
-                        services.AddTransient<ISqlDbBuilder, MySqlDbBuilder>();
-                    }
+                    var config = hostContext.Configuration;
+                    services.Configure(config);
                 })
                 .ConfigureAppConfiguration(options => options.AddJsonFile("appsettings.json"))
                 .ConfigureLogging(options => options.AddConsole())
                 .UseConsoleLifetime();
 
             var host = serviceProvider.Build();
-            var logger = host.Services.GetService<ILoggerFactory>()
-                .CreateLogger<Program>();
+#pragma warning disable CS8604 // Possible null reference argument.
+            ILogger<Program> logger = host.Services.GetService<ILoggerFactory>().CreateLogger<Program>();
+#pragma warning restore CS8604 // Possible null reference argument.
 
             logger.LogDebug("Starting application");
 
-            ExecuteProgram(host, args, logger);
+            await ExecuteProgramAsync(host, args, logger);
 
             logger.LogDebug("Command successfully executed. Application will shutdown now.");
         }
@@ -59,7 +41,6 @@ public class Program
         }
 
         return (int)AppEnums.EXIT_CODES.SUCCESS;
-#pragma warning restore warning-list
     }
 
     /// <summary>
@@ -68,18 +49,18 @@ public class Program
     /// <param name="serviceProvider"></param>
     /// <param name="args"></param>
     /// <param name="logger"></param>
-    private static void ExecuteProgram(IHost serviceProvider, string[] args, ILogger<Program> logger)
+    private static async Task ExecuteProgramAsync(IHost serviceProvider, string[] args, ILogger<Program> logger)
     {
         try
         {
-            var _inputEvaluatorHelper = serviceProvider.Services.GetService<IInputEvaluatorHelper>();
+            var inputEvaluatorHelper = serviceProvider.Services.GetService<IInputEvaluatorHelper>();
             var inputRouterHelper = serviceProvider.Services.GetService<IInputRouterHelper>();
-            var userInput = _inputEvaluatorHelper?.GetUserInputObject(args);
-            inputRouterHelper?.HandleUserInput(userInput);
+            var userInput = inputEvaluatorHelper?.GetUserInputObject(args) ?? throw new ArgumentNullException("Invalid user input entered.");
+            await inputRouterHelper?.HandleUserInputAsync(userInput: userInput);
         }
-        catch (Exception Ex)
+        catch (Exception ex)
         {
-            logger.LogDebug("Read and/or write operations failed: {Exception}.\nApplication will shutdown now.", Ex.Message);
+            logger.LogDebug(ex, "Read and/or write operations failed: {Exception}.\nApplication will shutdown now.", ex.Message);
             throw;
         }
     }

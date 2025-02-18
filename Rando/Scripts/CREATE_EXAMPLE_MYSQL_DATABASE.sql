@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS banks,
                      credit_cards,
                      beers;
                      
-CREATE TABLE `rando`.`banks` (
+CREATE TABLE IF NOT EXISTS `rando`.`banks` (
   `id` INT NOT NULL,
   `uid` VARCHAR(45) NULL,
   `account_number` VARCHAR(30) NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE `rando`.`banks` (
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
 COMMENT = 'Create table if doesn\'t already exist';
 
-CREATE TABLE `rando`.`beers` (
+CREATE TABLE IF NOT EXISTS `rando`.`beers` (
   `id` INT NOT NULL,
   `uid` VARCHAR(40) NULL,
   `brand` VARCHAR(45) NULL,
@@ -42,5 +42,3 @@ CREATE TABLE `rando`.`beers` (
 
 INSERT INTO `rando`.`banks` VALUES (6539, 'e69fbf0a-ee5e-4a50-a980-ac32f7928cc2','9355841801','GB14ZVSH99972078064052','ABN AMRO FUND MANAGERS LIMITED','094928648','AACNGB21');
 INSERT INTO `rando`.`beers` VALUES (5697,'878f2411-9bfa-472e-be79-027706e0dfa7','Leffe','Kirin Inchiban','Light Lager','Columbus','2308 - Munich Lager','Wheat mal','32 IBU',3.1,'18.4°Blg');
-
-SELECT count(*) FROM information_schema.TABLES WHERE (TABLE_SCHEMA = 'rando') AND (TABLE_NAME = 'beers');

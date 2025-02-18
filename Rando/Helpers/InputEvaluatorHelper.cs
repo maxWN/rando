@@ -51,7 +51,7 @@ public class InputEvaluatorHelper : IInputEvaluatorHelper
         }
         catch (Exception ex)
         {
-            _logger.LogError("The following exception occurred: {ErrorMessage} {StackTrace}", ex.Message, ex.StackTrace);
+            _logger.LogError(ex, "The following exception occurred: {ErrorMessage} {StackTrace}", ex.Message, ex.StackTrace);
             throw;
         }
 
@@ -118,9 +118,8 @@ public class InputEvaluatorHelper : IInputEvaluatorHelper
                 PrintArgViolations(QuantityValidationResults);
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-
             throw;
         }
     }
