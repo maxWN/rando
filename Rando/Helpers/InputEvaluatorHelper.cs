@@ -74,11 +74,7 @@ public class InputEvaluatorHelper : IInputEvaluatorHelper
 
     private string IsArgPresent(string[]? args, int index)
     {
-        if ((args?.Length - 1) < index)
-        {
-            return "";
-        }
-        return args[index];
+        return args?.ElementAtOrDefault(index) ?? "";
     }
 
     private void SetFlagProperties(string[]? args, UserInput userInput)
