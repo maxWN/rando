@@ -12,5 +12,5 @@ public interface IInputRouterHelper {
 
     Task<string> GetMockDataAsync(UserInput userInput);
 
-    void HandleAdditionalUserInput(UserInput userInput, string result);
+    Task HandleAdditionalUserInputAsync(UserInput userInput, string result);
 }

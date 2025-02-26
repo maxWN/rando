@@ -20,7 +20,7 @@ public class FileCreatorHelper : IFileCreatorHelper
     /// <param name="path"></param>
     /// <param name="fileContent"></param>
     /// <param name="fileType"></param>
-    public void CreateFile(string path, string fileContent, string fileType)
+    public async Task CreateFileAsync(string path, string fileContent, string fileType)
     {
         if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(fileContent) || string.IsNullOrWhiteSpace(fileType)) {
             Console.WriteLine(AppConstants.USER_DIRECTIONS);
@@ -39,7 +39,7 @@ public class FileCreatorHelper : IFileCreatorHelper
             {
                 byte[] info = new UTF8Encoding(true).GetBytes(fileContent);
                 // Add some information to the file.
-                fs.Write(info, 0, info.Length);
+                await fs.WriteAsync(info, 0, info.Length);
             }
         }
         catch (UnauthorizedAccessException ex)

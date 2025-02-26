@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Rando.Common;
 using Kurukuru;
-using Microsoft.Extensions.Configuration;
+// using Microsoft.Extensions.Configuration;
 
 namespace Rando.Helpers;
 
@@ -72,11 +72,11 @@ public class InputRouterHelper : IInputRouterHelper
             });
             // TODO: Extract the following logic to new function after implementing DB & API handling logic
             if (!string.IsNullOrWhiteSpace(result) && !string.IsNullOrWhiteSpace(userInput.FlagType))
-                HandleAdditionalUserInput(userInput, result);
+                await HandleAdditionalUserInputAsync(userInput, result);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "The following exception occurred: {ErrorMessage} {StackTrace}", ex.Message, ex.StackTrace);
+            _logger.LogError(ex, "The following exception occurred:");
             throw;
         }
         finally
@@ -89,13 +89,13 @@ public class InputRouterHelper : IInputRouterHelper
         return result?.ToString();
     }
 
-    public void HandleAdditionalUserInput(UserInput userInput, string result)
+    public async Task HandleAdditionalUserInputAsync(UserInput userInput, string result)
     {
         try
         {
             if (userInput.FlagType.Equals(FlagType.FileFlag))
             {
-                _fileCreatorHelper.CreateFile(userInput.FilePath, result, userInput.FileName);
+                await _fileCreatorHelper.CreateFileAsync(userInput.FilePath, result, userInput.FileName);
             }
             else if (userInput.FlagType.Equals(FlagType.DatabaseFlag))
             {

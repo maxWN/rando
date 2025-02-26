@@ -37,13 +37,13 @@ public class InputEvaluatorHelperTests
     }
 
     [Fact]
-    public void HandleAdditionalUserInput_ThrowsArgumentNullException_WithNullInput()
+    public void HandleAdditionalUserInputAsync_ThrowsArgumentNullException_WithNullInput()
     {
         // Arrange
         UserInput input = new UserInput { DataType = DataType.BEERS, Quantity = 1, FlagType = "asdfasfa" };
 
         // Act & Assert
-        var ex = Assert.Throws<ArgumentException>(() => _inputRouterHelper.HandleAdditionalUserInput(input, "asdfadf"));
-        Assert.Equal("Invalid file type provided!", ex.Message);
+        var ex = Assert.ThrowsAsync<ArgumentException>(() => _inputRouterHelper.HandleAdditionalUserInputAsync(input, "asdfadf"));
+        Assert.Equal("Invalid file type provided!", ex.Result.Message);
     }
 }
