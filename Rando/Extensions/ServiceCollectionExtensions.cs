@@ -22,9 +22,9 @@ public static class ServiceCollectionExtensions
             httpClient.BaseAddress = new Uri($"{AppConstants.RANDOM_DATA_API_BASE_URL}");
         });
         services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
-        services.AddTransient<IInputRouterHelper, InputRouterHelper>();
-        services.AddTransient<IFileCreatorHelper, FileCreatorHelper>();
-        services.AddTransient<IInputEvaluatorHelper, InputEvaluatorHelper>();
+        services.AddScoped<IInputRouterHelper, InputRouterHelper>();
+        services.AddScoped<IFileCreatorHelper, FileCreatorHelper>();
+        services.AddScoped<IInputEvaluatorHelper, InputEvaluatorHelper>();
         services.ConfigureSqlDatabase(configuration);
         return services;
     }
